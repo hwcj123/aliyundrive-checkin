@@ -34,9 +34,9 @@ class Aliyundrive:
             if not flag:
                 return handle_error(f'check_in error: {message}')
             
-            flag, message = self._get_reward(access_token, signin_count)
+            flag, message = self._get_reward_for_month(access_token, signin_count)
             if not flag:
-                return handle_error(f'get_reward error: {message}')
+                return handle_error(f'_get_reward_for_month error: {message}')
             
             info.success = True
             info.user_name = user_name
@@ -107,23 +107,23 @@ class Aliyundrive:
     :return tuple[0]: 是否成功
     :return tuple[1]: message 奖励信息或者出错信息
     """
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
-def _get_reward(self, access_token: str, sign_day: int) -> tuple[bool, str]:
-    url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
-    payload = {'signInDay': sign_day}
-    params = {'_rx-s': 'mobile'}
-    headers = {'Authorization': f'Bearer {access_token}'}
-
-    response = requests.post(url, json=payload, params=params, headers=headers, timeout=5)
-    data = response.json()
-
-    if 'result' not in data:
-        return False, data['message']
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
+    def _get_reward(self, access_token: str, sign_day: int) -> tuple[bool, str]:
+        url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
+        payload = {'signInDay': sign_day}
+        params = {'_rx-s': 'mobile'}
+        headers = {'Authorization': f'Bearer {access_token}'}
     
-    success = data['success']
-    notice = data['result']['notice']
-    return success, notice
-
+        response = requests.post(url, json=payload, params=params, headers=headers, timeout=5)
+        data = response.json()
+    
+        if 'result' not in data:
+            return False, data['message']
+        
+        success = data['success']
+        notice = data['result']['notice']
+        return success, notice
+    
     """
     获得当月所有奖励
     
