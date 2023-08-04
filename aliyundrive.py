@@ -135,7 +135,7 @@ class Aliyundrive:
     :return tuple[1]: message 奖励信息或者出错信息
     """
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
-    def _get_reward_for_month(self, access_token: str) -> tuple[bool, str]:
+    def _get_reward_for_month(self, access_token: str, sign_day: int) -> tuple[bool, str]:
         url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
         params = {'_rx-s': 'mobile'}
         headers = {'Authorization': f'Bearer {access_token}'}
