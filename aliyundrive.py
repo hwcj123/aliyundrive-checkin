@@ -36,7 +36,7 @@ class Aliyundrive:
             if not flag:
                 return handle_error(f'check_in error: {message}')
             
-            flag, message = self._get_reward_for_month(access_token)
+            flag, message = self._get_reward_for_month(access_token, signin_count)
             print("month",flag, message)
             if not flag:
                 return handle_error(f'_get_reward_for_month error: {message}')
@@ -135,17 +135,17 @@ class Aliyundrive:
     :return tuple[1]: message 奖励信息或者出错信息
     """
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
-    def _get_reward_for_month(self, access_token: str) -> tuple[bool, str]:
+    def _get_reward_for_month(self, access_token: str, sign_day: int) -> tuple[bool, str]:
         url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
         params = {'_rx-s': 'mobile'}
         headers = {'Authorization': f'Bearer {access_token}'}
-    
+        sign_day = day
         # 获取当前日期
         current_date = datetime.datetime.now()
-    
+        print(current_date)
         # 获取本月的最后一天
         last_day_of_month = current_date + relativedelta(day=31)
-    
+        print(last_day_of_month)
         # 使用calendar模块获取本月的天数
         _, days_in_month = calendar.monthrange(current_date.year, current_date.month)
     
