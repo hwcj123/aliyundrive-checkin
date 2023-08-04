@@ -36,10 +36,10 @@ class Aliyundrive:
             if not flag:
                 return handle_error(f'check_in error: {message}')
             
-            flag, message = self._get_reward_for_month(access_token)
+            flag, message = self._get_reward(access_token, signin_count)
             print("month",flag, message)
             if not flag:
-                return handle_error(f'get_reward_for_month error: {message}')
+                return handle_error(f'_get_reward error: {message}')
             
             info.success = True
             info.user_name = user_name
@@ -113,57 +113,24 @@ class Aliyundrive:
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     def _get_reward(self, access_token: str, sign_day: int) -> tuple[bool, str]:
         url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
-        payload = {'signInDay': sign_day}
+        
         params = {'_rx-s': 'mobile'}
         headers = {'Authorization': f'Bearer {access_token}'}
-    
-        response = requests.post(url, json=payload, params=params, headers=headers, timeout=5)
-        data = response.json()
-    
-        if 'result' not in data:
-            return False, data['message']
-        
-        success = data['success']
-        notice = data['result']['notice']
-        return success, notice
-    
-    """
-    获得当月所有奖励
-    
-    :param access_token: 调用_get_access_token方法返回的access_token
-    :return tuple[0]: 是否成功
-    :return tuple[1]: message 奖励信息或者出错信息
-    """
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
-    def _get_reward_for_month(self, access_token: str) -> tuple[bool, str]:
-        url = 'https://member.aliyundrive.com/v1/activity/sign_in_reward'
-        params = {'_rx-s': 'mobile'}
-        headers = {'Authorization': f'Bearer {access_token}'}
-        
-        # 获取当前日期
-        current_date = datetime.datetime.now()
-        print(current_date)
-        # 获取本月的最后一天
-        last_day_of_month = current_date + relativedelta(day=31)
-        print(last_day_of_month)
-        # 使用calendar模块获取本月的天数
-        _, days_in_month = calendar.monthrange(current_date.year, current_date.month)
-    
-        # 如果当前日期是本月的最后一天
-        if current_date == last_day_of_month:
-            success_all = True
-            notice_all = ""
-    
-            # 遍历领取当月每一天的奖励
-            for day in range(1, days_in_month + 1):
-                success, notice = self._get_reward(access_token, day)
-    
-                # 判断是否有领取失败的情况，如果有任何一天领取失败，则整体视为失败
-                if not success:
-                    success_all = False
+
+        if sign_day = 31:
+            notice_all = ''
+            for day in range(1, 31):
+                payload = {'signInDay': day}
+                response = requests.post(url, json=payload, params=params, headers=headers, timeout=5)
+                data = response.json()
+            
+                if 'result' not in data:
+                    return False, data['message']
+                
+                success = data['success']
+                notice = data['result']['notice']
                 notice_all += f"Day {day}: {notice}\n"
-    
-            return success_all, notice_all
-    
+                
+            return success, notice_all
         else:
             return True, "不是本月最后一天，不领取本月所有奖励。"
