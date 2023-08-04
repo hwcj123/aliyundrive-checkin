@@ -1,6 +1,6 @@
 import json
 import requests
-import calendar
+import calendar, datetime
 from dateutil.relativedelta import relativedelta
 from aliyundrive_info import AliyundriveInfo
 from tenacity import retry, stop_after_attempt, wait_fixed, RetryError
@@ -116,10 +116,12 @@ class Aliyundrive:
         
         params = {'_rx-s': 'mobile'}
         headers = {'Authorization': f'Bearer {access_token}'}
+        now_date = datetime.datetime.now()
+        sum_day = calendar.monthrange(now_date.year,now_date.month)[1]
 
-        if sign_day == 31:
+        if sign_day == sum_day:
             notice_all = ''
-            for day in range(1, 31):
+            for day in range(1, sum_day+1):
                 payload = {'signInDay': day}
                 response = requests.post(url, json=payload, params=params, headers=headers, timeout=5)
                 data = response.json()
