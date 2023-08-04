@@ -14,6 +14,7 @@ class AliyundriveInfo:
 
     def __str__(self) -> str:
         message_all = ''
+        print(self.success)
         if self.success:
             message_all = f'用户：{self.user_name}\n'\
                             f'签到：本月已签到{self.signin_count}次\n'\
