@@ -117,7 +117,7 @@ class Aliyundrive:
         params = {'_rx-s': 'mobile'}
         headers = {'Authorization': f'Bearer {access_token}'}
 
-        if sign_day = 31:
+        if sign_day == 31:
             notice_all = ''
             for day in range(1, 31):
                 payload = {'signInDay': day}
