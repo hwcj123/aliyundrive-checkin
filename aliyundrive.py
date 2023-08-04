@@ -27,14 +27,17 @@ class Aliyundrive:
         
         try:
             flag, user_name, access_token, message = self._get_access_token(token)
+            print("_get_access_token",flag, message)
             if not flag:
                 return handle_error(f'get_access_token error: {message}')
             
             flag, signin_count, message = self._check_in(access_token)
+            print("_check_in",flag, signin_count, message)
             if not flag:
                 return handle_error(f'check_in error: {message}')
             
             flag, message = self._get_reward_for_month(access_token, signin_count)
+            print("month",flag, message)
             if not flag:
                 return handle_error(f'_get_reward_for_month error: {message}')
             
